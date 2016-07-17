@@ -152,12 +152,17 @@ class Shape {
         self.name = name
     }
     
+//    init(_: String) {
+//        self.name = $(0);
+//    }
+    
     
     func simpleDescription() -> String {
         return "A shape with \(numberOfSides) sides."
     }
 }
 
+//var shape = Shape("abc")
 var shape = Shape(name: "abc")
 shape.numberOfSides = 7
 
@@ -334,11 +339,79 @@ possibleInteger = .Some(100)
 // convertedNumber 被推测为类型 "Int?", 或者类型 "optional Int"
 
 
+var airports = ["TYO": "Tokyo", "DUB": "Dublin"]
+print("The dictionary of airports contains \(airports.count) items."
+)
+
+airports["LHR"] = "London"
+
+airports["LHR"] = "London Heathrow"
+
+if let oldValue = airports.updateValue("Dublin Internation", forKey: "DUB") {
+print("The old value for DUB was \(oldValue).")
+}
 
 
+//func
+func sayHello(personName: String, age: Int) -> String {
+    let greeting = "Hello, " + personName + "!" + "age \(age)"
+    return greeting
+}
+print(sayHello("Anna", age:18))
+// prints "Hello, Anna!"
+
+//print(sayHello("Brian", 20))
+print(sayHello("Brian", age: 20))
+// prints "Hello, Brian!"
 
 
+//func  externalParameterName
+func sayHello2(externalParameterName personName: String, age: Int) -> String {
+    let greeting = "Hello, " + personName + "!" + "age \(age)"
+    return greeting
+}
+print(sayHello2(externalParameterName: "Anna", age:18))
+// prints "Hello, Anna!"
 
+//print(sayHello("Brian", 20))
+print(sayHello2(externalParameterName: "Brian", age: 20))
+// prints "Hello, Brian!"
+
+//func  externalParameterAge
+func sayHello3(externalParameterName personName: String, externalParameterAge age: Int) -> String {
+    let greeting = "Hello, " + personName + "!" + "age \(age)"
+    return greeting
+}
+print(sayHello3(externalParameterName: "Anna", externalParameterAge:18))
+// prints "Hello, Anna!"
+
+//print(sayHello("Brian", 20))
+print(sayHello3(externalParameterName: "Brian", externalParameterAge: 20))
+// prints "Hello, Brian!"
+
+//func  #
+//func sayHello4(#personName: String, #age: Int) -> String {
+//    let greeting = "Hello, " + personName + "!" + "age \(age)"
+//    return greeting
+//}
+//print(sayHello4(externalParameterName: "Anna", externalParameterAge:18))
+//// prints "Hello, Anna!"
+//
+////print(sayHello("Brian", 20))
+//print(sayHello4(externalParameterName: "Brian", externalParameterAge: 20))
+//// prints "Hello, Brian!"
+
+
+func swapTwoInts(inout a: Int, inout b: Int) {
+    let temporaryA = a
+    a=b
+    b = temporaryA
+}
+var someInt = 3
+var anotherInt = 107
+swapTwoInts(&someInt, b: &anotherInt)
+print("someInt is now \(someInt), and anotherInt is now \(anotherInt )")
+// prints "someInt is now 107, and anotherInt is now 3"
 
 
 
