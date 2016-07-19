@@ -1189,11 +1189,163 @@ print(breakfastList[2].description)
 
 
 //2.20 拓展 TO Continue
+//Swift 的扩展没有名字
+
+//Swift 中的扩展可以:
+//1. 添加计算型属性和计算静态属性 
+//2. 定义实例方法和类型方法
+//3. 提供新的构造器
+//4. 定义下标
+//5. 定义和使用新的嵌套类型
+//6. 使一个已有类型符合􏰁个接口
+
+/*注意:扩展可以添加新的计算属性,但是不可以添加存储属性,也不可以向已有属性添加属 性观测器(property observers)。*/
+
+//2.21 -->协议
+//协议的语法
+//属性要求
+//方法要求
+//突变方法要求
+//协议类型
+//委托(代理)模式
+//在扩展中添加协议成员
+//通过延展补充协议声明
+//集合中的协议类型
+//协议的继承
+//协议合成
+//检验协议的一致性
+//可选协议要求
+protocol FullyNamed {
+    var fullName: String { get }
+}
+struct Person: FullyNamed{
+    var fullName: String
+}
+
+let john = Person(fullName: "John Appleseed")
+//john.fullName 为 "John Appleseed"
+
+/*委托(代理)模式*/
+
+protocol RandomNumberGenerator {
+    func random() -> Double
+}
+
+class LinearCongruentialGenerator: RandomNumberGenerator {
+    var lastRandom = 42.0
+    let m = 139968.0
+    let a = 3877.0
+    let c = 29573.0
+    func random() -> Double {
+        lastRandom = ((lastRandom * a + c) % m)
+        return lastRandom / m
+    }
+}
+let generator = LinearCongruentialGenerator()
+print("Here's a random number: \(generator.random())")
+// 输出 : "Here's a random number: 0.37464991998171"
+print("And another one: \(generator.random())")
+// 输出 : "And another one: 0.729023776863283"
+print("And another one: \(generator.random())")
+
+
+class Dice {
+    let sides: Int
+    let generator: RandomNumberGenerator
+    
+    init(sides: Int, generator: RandomNumberGenerator) {
+        self.sides = sides
+        self.generator = generator
+    }
+    func roll() -> Int {
+        return Int(generator.random() * Double(sides)) + 1
+    }
+}
+
+var d6 = Dice(sides: 6,generator:LinearCongruentialGenerator())
+for _ in 1...5 {
+    print("Random dice roll is \(d6.roll())")
+}
+//输出结果
+//Random dice roll is 3
+//Random dice roll is 5 
+//Random dice roll is 4
+//Random dice roll is 5
+//Random dice roll is 4
+
+protocol DiceGame {
+    var dice: Dice { get }
+    func play()
+}
+protocol DiceGameDelegate {
+    func gameDidStart(game: DiceGame)
+    func game(game: DiceGame, didStartNewTurnWithDiceRoll diceRoll:Int
+    )
+    func gameDidEnd(game: DiceGame)
+}
+
+class SnakesAndLadders: DiceGame {
+    let finalSquare = 25
+    let dice = Dice(sides: 6, generator: LinearCongruentialGenerator())
+    var square = 0
+    var board: [Int]
+    init() {
+        board = [Int](count: finalSquare + 1, repeatedValue: 0)
+        board[03] = +08;
+        board[06] = +11;
+        board[09] = +09;
+        board[10] = +02;
+        board[14] = -10;
+        board[19] = -11;
+        board[22] = -02;
+        board[24] = -08;
+    }
+    
+    var delegate: DiceGameDelegate?
+    
+    func play() {
+        square = 0
+        delegate?.gameDidStart(self)
+        
+        gameLoop:
+            while square != finalSquare {
+            
+            let diceRoll = dice.roll()
+            delegate?.game(self,didStartNewTurnWithDiceRoll: diceRoll)
+            
+            switch square + diceRoll {
+            case finalSquare:
+                break gameLoop
+            case let newSquare where newSquare > finalSquare:
+                continue gameLoop
+            default:
+                square += diceRoll
+                square += board[square]
+            }
+        }
+        delegate?.gameDidEnd(self)
+    }
+}
+
+
+//2.22 -->泛型
+//泛型所解决的问题
+//泛型函数
+//类型参数
+//命名类型参数
+//泛型类型
+//类型约束
+//￼￼￼关联类型
+//Where 语句
 
 
 
-
-
+//2.23 -->高级运算符
+//位运算符
+//溢出运算符
+//优先级和结合性
+//运算符函数
+//自定义运算符
 
 
 
