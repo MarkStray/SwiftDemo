@@ -881,6 +881,12 @@ print("AutomaticCar: \(automatic.description())")
 //构造过程
 /*与 Objective-C 中的构造器不同,Swift 的构造器无需返回值,它 们的主要任务是保证新实例在第一次使用前完成正确的初始化。*/
 
+//存储型属性的初始赋值
+//定制化构造过程
+//默认构造器
+//值类型的构造器代理
+//类的继承和构造过程
+//通过闭包和函数来设置属性的默认值
 
 // 好像不支持 静态代码块 构造代码块 构造函数
 class classDemo {
@@ -958,61 +964,231 @@ let boilingPointOfWater = Celsius(212.0)
 let freezingPointOfWater = Celsius(__: 273.15)
 // freezingPointOfWater.temperatureInCelsius 是 0.0”
 
+//默认构造器
+class ShoppingListXXItem {
+    var name: String?
+    var quantity = 1
+    var purchased = false
+//    var name: String?
+//    var quantity: Int = 0
+//    var purchased: Bool
+}
 
+var item = ShoppingListXXItem()
 
 //结构体的逐一成员构造器 TO Continue
 
+// 结构体 比类多个 逐一成员构造器
+struct Size {
+    //var width: Double, height: Double
+    var width = 0.0, height = 0.0
+}
+let twoByOne = Size()
+let twoByTwo = Size(width: 2.0, height: 2.0)
+
+
+//值类型的构造器代理
+/*值类型(结构体和枚举类
+ 型)不支持继承,所以构造器代理的过程相对简单,因为它们只能代理任务给本身 供的
+ 其它构造器。类则不同,它可以继承自其它类(请参考继承),这意味着类有责任保证其
+ 所有继承的存储型属性在构造时也能正确的初始化*/
+
+/*如果你为 个值类型定义了一个定制的构造器,你将无法访问到默认构造器(如果
+ 是结构体,则无法访问逐一对象构造器)
+ 假如你想通过默认构造器、逐一对象构造器以及你自己定制的构造器为值类型创建 实例,我们建议你将自己定制的构造器写到扩展(extension)中,而不是跟值类型定义混 在一起*/
+
+//类的继承和构造过程
+//指定构造器和便利构造器
+
+/*指定构造器是类中最主要的构造器。一个指定构造器将初始化类中 供的所有属性,并根
+ 据父类链往上调用父类的构造器来实现父类的初始化*/
+
+//构造器链 调用规则
+//规则 1
+//指定构造器必须调用其直接父类的的指定构造器。
+//规则 2
+//便利构造器必须调用同一类中定义的其它构造器。
+//规则 3
+//便利构造器必须最终以调用一个指定构造器结束。
+
+//指定构造器必须总是向上代理
+//便利构造器必须总是横向代理
+
+//两段式构造过程
+/*
+ Swift 中类的构造过程包含两个阶段。
+ 第一个阶段,每个存储型属性通过引入它们的类的 构造器来设置初始值。PS难道说的直接初始化)
+ 当每一个存储型属性值被确定后,
+ 第二阶段开始,它给每个类一次机会在新实例准备使用之前进一步定制它们的存储型属性。
+ */
+
+//???????????? no clear
+/*两段式构造过程的使用让构造过程更安全,
+ 同时在整个类层级结构中给予了每个类完全的灵活性。
+ 两段式构造过程可以防止属性值在初始化之前被访问;
+ 也可以防止属性被另外一个构造器意外地赋予不同的值。*/
+
+// Java:: 初始化子类必先初始化父类，这是Java 程序的一个基本运行过程
+// Java 静态代码块 > 构造代码块 > 构造函数  静态属性/块 先到先得 顺序执行
+
+//Swift 编译器将执行 4 种有效的安全检查,以确保两段式构造过程能顺利完成:
+//安全检查 1 指定构造器必须保证它所在类引入的所有属性都必须先初始化完成,之后才能将其它构造任务向上代理给父类中的构造器。
+//如上所述,一个对象的内存只有在其所有存储型属性确定之后才能完全初始化。为了满足这一规则,指定构造器必须保证它所在类引入的属性在它往上代理之前先完成初始化。
+//安全检查 2 指定构造器必须先向上代理调用父类构造器,然后再为继承的属性设置新值。如果没这么做,指定构造器赋予的新值将被父类中的构造器所覆盖。
+//安全检查 3 便利构造器必须先代理调用同一类中的其它构造器,然后再为任意属性赋新值。如果没这 么做,便利构造器赋予的新值将被同一类中其它指定构造器所覆盖。
+//安全检查 4 构造器在第一阶段构造完成之前,不能调用任何实例方法、不能读取任何实例属性的值, 也不能引用 self 的值。
+
+/*阶段 1
+ 个指定构造器或便利构造器被调用; 完成新实例内存的分配,但此时内存还没有被初始化;
+ 指定构造器确保其所在类引入的所有存储型属性都已赋初值。存储型属性所属的内存完成
+ 初始化;
+ 指定构造器将调用父类的构造器,完成父类属性的初始化;
+ 这个调用父类构造器的过程沿着构造器链一直往上执行,直到到达构造器链的最顶部;
+ 当到达了构造器链最顶部,且已确保所有实例包含的存储型属性都已经赋值,这个实例的 内存被认为已经完全初始化。此时阶段 1 完成。*/
+
+/*阶段 2
+ 从顶部构造器链一直往下,每个构造器链中类的指定构造器都有机会进一步定制实例。构
+ 造器此时可以访问 self、修改它的属性并调用实例方法等等。 最终,任意构造器链中的便利构造器可以有机会定制实例和使用 self。*/
+
+
+//构造器的继承和重载
+//跟 Objective-C 中的子类不同,Swift 中的子类不会默认继承父类的构造器。Swift 的这 种机制可以防止一个父类的简单构造器被一个更专业的子类继承,并被错误的用来创建子类的实例
+
+//如果你重载的构造器是一个指定构造器,你可以在子类里重载它的实现,并在自定义版本
+//的构造器中调用父类版本的构造器。
+//如果你重载的构造器是一个便利构造器,你的重载过程必须通过调用同一类中供的其它
+//指定构造器来实现
+
+//自动构造器的继承
+
+/*如上所述,子类不会默认继承父类的构造器。
+ 但是如果特定条件可以满足,父类构造器是可以被自动继承的。
+ 在实践中,这意味着对于许多常见场景你不必重载父类的构造器,
+ 并且在尽可能安全的情况下以最小的代价来继承父类的构造器。
+ 
+ //--假设要为子类中引入的任意新属性供默认值,
+ //--请遵守以下 2 个规则:*/
+
+//规则 1
+//如果子类没有定义任何指定构造器,它将自动继承所有父类的指定构造器。
+//规则 2
+//如果子类 供了所有父类指定构造器的实现--不管是通过规则 1 继承过来的,还是通过自定义实现的--它将自动继承所有父类的便利构造器。
+
+//DEMO -->  指定构造器、便利构造器和自动构造器的继承
+class Food {
+    var name: String
+    
+    //指定构造器
+    init(name: String) {
+        self.name = name
+    }
+    //便利构造器
+    convenience init() {
+        self.init(name: "[Unnamed]")
+    }
+}
+let namedMeat = Food(name: "Bacon")
+// namedMeat 的名字是 "Bacon”
+print("namedMeat name \(namedMeat.name)")
+
+let mysteryMeat = Food();
+//mysteryMeat.name = "Bread";
+print("mysteryMeat name \(mysteryMeat.name)")
+
+
+class RecipeIngredient: Food {
+    var quantity: Int
+    
+    init(name: String, quantity: Int) {
+        self.quantity = quantity
+        super.init(name: name)
+        //self.quantity = quantity 不能放在调用super之后
+    }
+    
+    convenience override init(name: String) {
+        self.init(name: name, quantity: 1)
+    }
+}
+
+/*
+ 注意,RecipeIngredient 的便利构造器 init(name: String)使用了跟 
+ Food 中指定构造器 init(name: String)相同的参数。
+ 尽管 RecipeIngredient 这个构造器是便利构造器,
+ RecipeIngredient 依然 供了对所有父类指定构造器的实现。
+ 因此,RecipeIngredient 也
+ 能自动继承了所有父类的便利构造器。*/
+
+let oneMysteryItem = RecipeIngredient()
+print("name \(oneMysteryItem.name), quantity \(oneMysteryItem.quantity)")
+
+let oneBacon = RecipeIngredient(name: "Bacon")
+print("name \(oneBacon.name), quantity \(oneBacon.quantity)")
+
+let sixEggs = RecipeIngredient(name: "Eggs", quantity: 6)
+print("name \(sixEggs.name), quantity \(sixEggs.quantity)")
+
+
+class ShoppingListItem: RecipeIngredient {
+    var purchased = false
+    var description: String {
+        // get
+        var output = "\(quantity) x \(name.lowercaseString)"
+        output += purchased ? " ++?" : " ?"
+        return output
+    }
+    
+//    var description: String = {
+    //        // 闭包执行时,实例的其它部分都还没有初始化 不能访问属性 self 方法
+//        var output = "\(quantity) x \(name.lowercaseString)"
+//        output += purchased ? " ++?" : " ?"
+//        return output
+//    }()
+
+}
+
+var breakfastList = [
+    ShoppingListItem(),
+    ShoppingListItem(name: "Bacon"),
+    ShoppingListItem(name: "Eggs", quantity: 6),
+]
+print(breakfastList[0].description)
+
+breakfastList[0].name = "Orange juice"
+breakfastList[0].purchased = true
+
+print(breakfastList[0].description)
+print(breakfastList[1].description)
+print(breakfastList[2].description)
+
+//for item in breakfastList {
+//    print(item.description)
+//}
+// 1 x orange juice ?
+// 1 x bacon ?
+// 6 x eggs ?
 
 
 
+//ARC  弱引用和无主引用
+//对于生命周期中引用会变为 nil 的实例,使用弱引用;
+//对于初始化时赋值之后引用再也不会赋值为 nil 的实例,使用无主引用
+
+//自判断链
 
 
+// zero as an Int 
+// zero as a Double
+// an integer value of 42
+// a positive double value of 3.14159
+// a string value of "hello" 
+// an (x, y) point at 3.0, 5.0
+// a movie called 'Ghostbusters', dir. Ivan Reitman。
+
+/*注意:在一个 switch 语句的 case 中使用强制形式的类型转换操作符(as, 而不是 as?) 来
+ 检查和转换到一个规定的类型。在 switch case 语句的内容中这种检查总是安全的。*/
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//2.20 拓展 TO Continue
 
 
 
