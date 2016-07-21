@@ -1459,6 +1459,122 @@ func swapTwoValues<T>(inout a: T, inout b: T) {
 //访问所属类型
 
 
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+//////////////////////疑-难-杂///////////////////////////
+////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
+
+//***创建对象
+
+var _str = NSString.self()
+_str = "TestNSString"
+print(_str)
+//说明继承于NSObject后， 调用self()就可以创建对象了。
+
+class MyClass: NSObject {
+    var member = 10
+    
+    override required init() {
+        print("init")
+    }
+}
+
+// 打印出10
+print( MyClass.self().member)
+//说明继承于NSObject后， 调用self()就可以创建对象了。
+
+let className = NSStringFromClass(MyClass)
+print(className)
+
+let classType = NSClassFromString(className) as? MyClass.Type
+
+classType!.init().member
+
+if let type = classType {
+    let my = type.init()
+    print(my.member)
+    //type为MyClass.Type，通过MyClass.Type.init()是可以创建类对象的
+}
+
+//我们还可以通过MyClass.self.init()来创建对象，
+print(MyClass.self.init().member)
+//打印出来也是10
+
+
+//总结：
+
+//在Swift中，要创建对象有以下几种方式：
+
+//1、NSString.self()// 或者NSString.self.init()
+//2、let myClass = MyClass.Type.init()
+//3、let myClass = MyClass.self.init()
+//4、let type = NSClassFromString("MyClass") as! MyClass.Type然后通过type.init()来创建对象
+
+//参考：
+//[ http://stackoverflow.com/questions/24049673/swift-class-introspection-generics ]
+//( http://stackoverflow.com/questions/24049673/swift-class-introspection-generics )
+
+
+
+//***Int Float Double CGFloat NSString 转换
+
+//Int → Float
+let myInt = 556
+let myFloat = Float(myInt)
+
+//Float → Int
+let myFloat2 = 556.13
+let myInt2 = Int(myFloat2)
+
+//Int → CGFloat
+let myInt3 = 556
+let myFloat3 = Float(myInt3)
+
+//CGFloat → Int
+let myFloat4 = 556.13
+let myInt4 = Int(myFloat4)
+
+//Int → String
+var intNum1: Int = 37
+var str1: String = String(intNum1)
+
+//String → Int
+var str6: String = "37"
+//var intNum6: Int = str6.toInt()
+var intNum6: Int = Int(str6)!
+// 37
+
+//Int → Double
+var intNum2: Int = 37
+var doubleNum2: Double = Double(intNum2)
+//37.0
+
+//Double → Int
+var doubleNum4: Double = 1.234
+var intNum4: Int = Int(doubleNum4)
+//1
+
+//Double → String
+var doubleNum3: Double = 1.234
+var str3: String = String("\(doubleNum3)")
+//"1.234"
+
+//String → Double
+//import = Darwin
+var str5: String = "10.5"
+//var doubleNum5: Double = atof(str5)
+var doubleNum5: Double = Double(str5)!
+//10.5
+
+
+
+
+
+
+
+
+
 
 
 
